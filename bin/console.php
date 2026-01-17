@@ -19,6 +19,7 @@ use App\Infrastructure\NullTransactionLogger;
 use App\Support\Autoloader;
 use App\Support\ConsoleIO;
 use App\Support\EnvLoader;
+use InvalidArgumentException;
 
 // 1) Bootstrap: carico l'autoloader e il .env
 $projectRoot = dirname(__DIR__);
@@ -107,6 +108,8 @@ while (true) {
             default:
                 ConsoleIO::println('Scelta non valida.');
         }
+    } catch (InvalidArgumentException $e) {
+        ConsoleIO::println('Importo non valido. Inserisci un numero positivo con massimo due decimali (es. 10.50).');
     } catch (Throwable $e) {
         // Gestione errori semplice per l'esercizio.
         ConsoleIO::println('ERRORE: ' . $e->getMessage());

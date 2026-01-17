@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace App\Domain;
 
+use InvalidArgumentException;
+
 final class Money
 {
     private int $cents;
@@ -39,25 +41,21 @@ final class Money
     {
         $amount = trim($amount);
         if ($amount === '') {
-            return new self(0);
+            throw new InvalidArgumentException('Importo non valido.');
         }
 
-        // Normalizziamo la virgola in punto.
-        $amount = str_replace(',', '.', $amount);
+        if (str_contains($amount, ',')) {
+            throw new InvalidArgumentException('Importo non valido.');
+        }
+
+        if (!preg_match('/^\d+(\.\d{1,2})?$/', $amount)) {
+            throw new InvalidArgumentException('Importo non valido.');
+        }
 
         // Split sulla parte decimale.
         $parts = explode('.', $amount, 2);
         $eurosPart = $parts[0];
         $centsPart = $parts[1] ?? '0';
-
-        // Validazione base: solo cifre.
-        if ($eurosPart === '' || !ctype_digit(ltrim($eurosPart, '0')) && $eurosPart !== '0') {
-            // In caso di input strano, torniamo 0 per non rompere l'esercizio.
-            return new self(0);
-        }
-        if ($centsPart !== '' && !ctype_digit($centsPart)) {
-            return new self(0);
-        }
 
         $euros = (int)$eurosPart;
         $centsPart = substr(str_pad($centsPart, 2, '0'), 0, 2);
