@@ -1,0 +1,11 @@
+# File locali
+.env
+
+# Log o dati generati
+/data/customers.csv
+/data/transactions.csv
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
